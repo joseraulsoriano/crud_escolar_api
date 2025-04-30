@@ -30,6 +30,14 @@ import string
 import random
 import json
 
+class AlumnosAll(generics.CreateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    def get(self, request, *args, **kwargs):
+        alumnos = Alumnos.objects.filter(user__is_active = 1).order_by("id")
+        lista = AlumnoSerializer(alumnos, many=True).data
+        
+        return Response(lista, 200)
+    
 class AlumnosView(generics.CreateAPIView):
     #Obtener usuario por ID
     # permission_classes = (permissions.IsAuthenticated,)
