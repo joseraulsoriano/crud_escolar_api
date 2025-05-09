@@ -45,17 +45,18 @@ class MaestrosAll(generics.CreateAPIView):
     
 class MaestrosView(generics.CreateAPIView):
     #Obtener usuario por ID
-    # permission_classes = (permissions.IsAuthenticated,)
     def get(self, request, *args, **kwargs):
-        maestro = get_object_or_404(Maestros, id = request.GET.get("id"))
-        maestro = MaestroSerializer(maestro, many=False).data
-        maestro["materias_json"] = json.loads(maestro["materias_json"])
-        return Response(maestro, 200)
+        try:
+            maestro = get_object_or_404(Maestros, id=request.GET.get("id"))
+            maestro = MaestroSerializer(maestro, many=False).data
+            maestro["materias_json"] = json.loads(maestro["materias_json"])
+            return Response(maestro, 200)
+        except Exception as e:
+            return Response({"error": str(e)}, 404)
     
     #Registrar nuevo usuario
     @transaction.atomic
     def post(self, request, *args, **kwargs):
-
         user = UserSerializer(data=request.data)
         if user.is_valid():
             #Grab user data
@@ -76,7 +77,6 @@ class MaestrosView(generics.CreateAPIView):
                                         last_name = last_name,
                                         is_active = 1)
 
-
             user.save()
             user.set_password(password)
             user.save()
@@ -84,7 +84,7 @@ class MaestrosView(generics.CreateAPIView):
             group, created = Group.objects.get_or_create(name=role)
             group.user_set.add(user)
             user.save()
-            #Para extraer de la base de datos hacer el json.load()
+
             #Create a profile for the user
             maestro = Maestros.objects.create(user=user,
                                             id_trabajador= request.data["id_trabajador"],
@@ -99,3 +99,40 @@ class MaestrosView(generics.CreateAPIView):
             return Response({"maestro_created_id": maestro.id }, 201)
 
         return Response(user.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MaestrosViewEdit(generics.CreateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    
+    #Actualizar maestro
+    def put(self, request, *args, **kwargs):
+        maestro = get_object_or_404(Maestros, id=request.data.get("id"))
+        user = maestro.user
+        
+        #Actualizar datos del usuario
+        user.first_name = request.data.get("first_name", user.first_name)
+        user.last_name = request.data.get("last_name", user.last_name)
+        user.email = request.data.get("email", user.email)
+        user.save()
+        
+        #Actualizar datos del maestro
+        maestro.id_trabajador = request.data.get("id_trabajador", maestro.id_trabajador)
+        maestro.fecha_nacimiento = request.data.get("fecha_nacimiento", maestro.fecha_nacimiento)
+        maestro.telefono = request.data.get("telefono", maestro.telefono)
+        maestro.rfc = request.data.get("rfc", maestro.rfc).upper()
+        maestro.cubiculo = request.data.get("cubiculo", maestro.cubiculo)
+        maestro.area_investigacion = request.data.get("area_investigacion", maestro.area_investigacion)
+        maestro.materias_json = json.dumps(request.data.get("materias_json", json.loads(maestro.materias_json)))
+        maestro.save()
+        
+        return Response({"message": "Maestro actualizado correctamente"}, 200)
+    
+    #Eliminar maestro
+    def delete(self, request, *args, **kwargs):
+        maestro = get_object_or_404(Maestros, id=request.GET.get("id"))
+        user = maestro.user
+        
+        #Desactivar usuario
+        user.is_active = 0
+        user.save()
+        
+        return Response({"message": "Maestro eliminado correctamente"}, 200)
