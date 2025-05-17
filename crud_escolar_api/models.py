@@ -66,7 +66,7 @@ class EventoAcademico(models.Model):
     PUBLICO_OBJETIVO_CHOICES = [
         ("Estudiantes", "Estudiantes"),
         ("Profesores", "Profesores"),
-        ("Publico general", "Público general"),
+        ("Publico general", "Publico general"),
     ]
     PROGRAMA_EDUCATIVO_CHOICES = [
         ("Ingeniería en Ciencias de la Computación", "Ingeniería en Ciencias de la Computación"),
