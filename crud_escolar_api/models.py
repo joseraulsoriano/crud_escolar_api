@@ -55,3 +55,38 @@ class Maestros(models.Model):
 
     def __str__(self):
         return "Perfil del maestro "+self.first_name+" "+self.last_name
+
+class EventoAcademico(models.Model):
+    TIPO_EVENTO_CHOICES = [
+        ("Conferencia", "Conferencia"),
+        ("Taller", "Taller"),
+        ("Seminario", "Seminario"),
+        ("Concurso", "Concurso"),
+    ]
+    PUBLICO_OBJETIVO_CHOICES = [
+        ("Estudiantes", "Estudiantes"),
+        ("Profesores", "Profesores"),
+        ("Publico general", "Público general"),
+    ]
+    PROGRAMA_EDUCATIVO_CHOICES = [
+        ("Ingeniería en Ciencias de la Computación", "Ingeniería en Ciencias de la Computación"),
+        ("Licenciatura en Ciencias de la Computación", "Licenciatura en Ciencias de la Computación"),
+        ("Ingeniería en Tecnologías de la Información", "Ingeniería en Tecnologías de la Información"),
+    ]
+    nombre_evento = models.CharField(max_length=100)
+    tipo_evento = models.CharField(max_length=20, choices=TIPO_EVENTO_CHOICES)
+    fecha_realizacion = models.DateField()
+    hora_inicio = models.TimeField()
+    hora_final = models.TimeField()
+    lugar = models.CharField(max_length=100)
+    publico_objetivo = models.CharField(max_length=20, choices=PUBLICO_OBJETIVO_CHOICES)
+    programa_educativo = models.CharField(max_length=50, choices=PROGRAMA_EDUCATIVO_CHOICES, null=True, blank=True)
+    responsable_maestro = models.ForeignKey('Maestros', null=True, blank=True, on_delete=models.SET_NULL, related_name='eventos_maestro')
+    responsable_admin = models.ForeignKey('Administradores', null=True, blank=True, on_delete=models.SET_NULL, related_name='eventos_admin')
+    descripcion_breve = models.CharField(max_length=300)
+    cupo_maximo = models.PositiveIntegerField()
+    creation = models.DateTimeField(auto_now_add=True)
+    update = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.nombre_evento
