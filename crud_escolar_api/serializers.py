@@ -43,3 +43,15 @@ class EventoAcademicoSerializer(serializers.ModelSerializer):
         if not responsable_maestro and not responsable_admin:
             raise serializers.ValidationError('Debe seleccionar un responsable: maestro o administrador.')
         return data
+
+class EstadisticasEventosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EstadisticasEventos
+        fields = '__all__'
+
+class EstadisticasGeneralesSerializer(serializers.Serializer):
+    total_administradores = serializers.IntegerField()
+    total_maestros = serializers.IntegerField()
+    total_alumnos = serializers.IntegerField()
+    eventos_por_dia = serializers.ListField(child=serializers.DictField())
+    eventos_por_tipo = serializers.ListField(child=serializers.DictField())

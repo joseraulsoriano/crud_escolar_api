@@ -21,6 +21,7 @@ from crud_escolar_api.views import alumnos
 from crud_escolar_api.views import maestros
 from crud_escolar_api.views import auth
 from crud_escolar_api.views.eventos_academicos import EventoAcademicoListCreateView, EventoAcademicoRetrieveUpdateDestroyView
+from crud_escolar_api.views.estadisticas import EstadisticasGeneralesView
 
 urlpatterns = [
     #Version
@@ -54,5 +55,7 @@ urlpatterns = [
     # Eventos académicos
     path('eventos-academicos/', EventoAcademicoListCreateView.as_view(), name='eventos-academicos-list-create'),
     path('eventos-academicos/<int:pk>/', EventoAcademicoRetrieveUpdateDestroyView.as_view(), name='eventos-academicos-detail'),
+    # Estadísticas
+    path('estadisticas/', EstadisticasGeneralesView.as_view(), name='estadisticas-generales'),
 ]
 

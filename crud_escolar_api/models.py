@@ -90,3 +90,17 @@ class EventoAcademico(models.Model):
 
     def __str__(self):
         return self.nombre_evento
+
+class EstadisticasEventos(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    fecha = models.DateField(auto_now_add=True)
+    tipo_evento = models.CharField(max_length=50)
+    cantidad_registros = models.IntegerField(default=0)
+    creation = models.DateTimeField(auto_now_add=True)
+    update = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-fecha']
+
+    def __str__(self):
+        return f"{self.tipo_evento} - {self.fecha}"
