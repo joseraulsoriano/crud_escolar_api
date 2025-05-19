@@ -53,5 +53,13 @@ class EstadisticasGeneralesSerializer(serializers.Serializer):
     total_administradores = serializers.IntegerField()
     total_maestros = serializers.IntegerField()
     total_alumnos = serializers.IntegerField()
-    eventos_por_dia = serializers.ListField(child=serializers.DictField())
-    eventos_por_tipo = serializers.ListField(child=serializers.DictField())
+    eventos_por_mes = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.CharField()
+        )
+    )
+    eventos_por_tipo = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.CharField()
+        )
+    )

@@ -94,13 +94,23 @@ class EventoAcademico(models.Model):
 class EstadisticasEventos(models.Model):
     id = models.BigAutoField(primary_key=True)
     fecha = models.DateField(auto_now_add=True)
+    mes = models.CharField(max_length=20, null=True, blank=True)  # Nombre del mes
     tipo_evento = models.CharField(max_length=50)
-    cantidad_registros = models.IntegerField(default=0)
+    cantidad_eventos = models.IntegerField(default=0)
     creation = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-fecha']
+        indexes = [
+            models.Index(fields=['mes']),
+            models.Index(fields=['tipo_evento']),
+        ]
+
+    def save(self, *args, **kwargs):
+        if not self.mes and self.fecha:
+            self.mes = self.fecha.strftime('%B')  # Establece el nombre del mes basado en la fecha
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.tipo_evento} - {self.fecha}"
+        return f"{self.tipo_evento} - {self.mes} ({self.cantidad_eventos} eventos)"
